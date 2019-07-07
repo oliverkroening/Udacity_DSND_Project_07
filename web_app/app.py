@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, jsonify
 from keras.applications.resnet50 import ResNet50, preprocess_input
-from keras.models import load_model
+from keras.models import load_model, Sequential
 from keras.preprocessing import image
+from keras.layers import GlobalAveragePooling2D
+from keras.layers import Dropout, Dense
 import os
 import pickle
 import cv2
@@ -12,8 +14,14 @@ with open("dog_names.txt", "rb") as f:   # Unpickling
     dog_names = pickle.load(f)
 
 # load ResNet50_dog_detector model and ResNet50_model to classify the dog
-ResNet50_dog_detector = load_model('../saved_models/ResNet50_dog_predict.h5')
-ResNet50_model = load_model('../saved_models/ResNet50_model.h5')
+ResNet50_dog_detector = ResNet50(weights='imagenet')
+# Define Architecture for ResNet50_model
+ResNet50_model = Sequential()
+ResNet50_model.add(GlobalAveragePooling2D(input_shape=(1,1,2048)))
+ResNet50_model.add(Dense(1024, activation='relu'))
+ResNet50_model.add(Dropout(0.3))
+ResNet50_model.add(Dense(133, activation='softmax'))
+ResNet50_model.load_weights('../saved_models/weights.best.ResNet50_0.3_1024.hdf5')
 
 # implement functions
 def face_detector(img_path):
@@ -29,6 +37,7 @@ def face_detector(img_path):
     return len(faces) > 0
 
 def extract_Resnet50(tensor):
+	from keras.applications.resnet50 import ResNet50, preprocess_input
 	return ResNet50(weights='imagenet', include_top=False).predict(preprocess_input(tensor))
 
 def path_to_tensor(img_path):
@@ -128,7 +137,6 @@ def upload():
     print("Destination:",destination)
     file.save(destination)
     desc = predict_dog_breed(destination)
-
     return render_template("complete.html", description=desc, image_name=filename)
 
 if __name__ == '__main__':
