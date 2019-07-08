@@ -54,10 +54,10 @@ The folder `saved_models` contains the trained models, that I achieved while wor
 - `weights.best.VGG19_0.15_256.hdf5`(example of VGG19 model with an added dense layer with 256 nodes and a dropout layer with a dopout rate of 0.15)
 
 the `web_app` folder contains the web app files:
-- app.py (main file to start the app)
-- templates/upload.html (HTML template for uploading images and starting prediction)
-- templates/complete.html (HTML template where the image and the predicted output is shown)
-- static/ (folder that contains all uploaded images)
+- `app.py` (main file to start the app)
+- `templates/upload.html` (HTML template for uploading images and starting prediction)
+- `templates/complete.html` (HTML template where the image and the predicted output is shown)
+- `static/` (folder that contains all uploaded images)
 
 Furthermore, I included the submitted HTML-file that contains the jupyter notebook.
 
