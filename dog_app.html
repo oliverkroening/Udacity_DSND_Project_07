@@ -13056,25 +13056,6 @@ ul.typeahead-list  > li > a.pull-right {
 .ansi-bold { font-weight: bold; }
 
     </style>
-<style type="text/css">
-    body[data-notebook-name] > #header #header-container:not(.show-panel), /* body has data-notebook-name attribute when 
-a notebook is open. this rule won't be applied when the notebook is not open (in 404 view for example) */
-body[data-notebook-name] #menubar-container #maintoolbar:not(.show-panel),
-body[data-notebook-name] #menubar-container ul.navbar-nav:not(.show-panel) {
-  display: none;
-}
-
-#menubar.only-panel #menus.navbar-default {
-    background: #fff;
-    border-color: #fff;
-}
-
-.toolbar.with-statusbar{
-    margin-top: 3px;
-    margin-bottom: 0;
-}
-
-    </style>
 
 
 <style type="text/css">
@@ -13108,7 +13089,7 @@ div#notebook {
 
 <!-- Loading mathjax macro -->
 <!-- Load mathjax -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS_HTML"></script>
     <!-- MathJax configuration -->
     <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
@@ -13597,6 +13578,67 @@ There are 836 test dog images.
 <p>Ideally, we would like 100% of human images with a detected face and 0% of dog images with a detected face.  You will see that our algorithm falls short of this goal, but still gives acceptable performance.  We extract the file paths for the first 100 images from each of the datasets and store them in the numpy arrays <code>human_files_short</code> and <code>dog_files_short</code>.</p>
 <p><strong>Answer:</strong></p>
 <p>With the CV-based face detector function, I was able to detect 98% of the faces in the <code>human_faces</code> imageset. I.e., I have an error rate of 2% of the images with a human in it, where the function could not detect any face. However, the detector found 11 faces in 100 dog images, which gives an error rate of 11%.</p>
+<p>In the case of detecting faces, the <code>haarcascade_frontalface_alt.xml</code> performed quite well, hence it is our choice for the rest of the notebook. The following table shows an overview about possible other classifiers:</p>
+<table>
+<thead><tr>
+<th>classifier</th>
+<th style="text-align:center">True Positive Rate (%)</th>
+<th style="text-align:center">False Positive Rate (%)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>haarcascade_eye.xml</td>
+<td style="text-align:center">93</td>
+<td style="text-align:center">69</td>
+</tr>
+<tr>
+<td>haarcascade_eye_tree_exeglasses.xml</td>
+<td style="text-align:center">68</td>
+<td style="text-align:center">16</td>
+</tr>
+<tr>
+<td>haarcascade_frontalface_alt.xml</td>
+<td style="text-align:center">100</td>
+<td style="text-align:center">11</td>
+</tr>
+<tr>
+<td>haarcascade_frontalface_alt_tree.xml</td>
+<td style="text-align:center">56</td>
+<td style="text-align:center">1</td>
+</tr>
+<tr>
+<td>haarcascade_frontalface_alt2.xml</td>
+<td style="text-align:center">98</td>
+<td style="text-align:center">20</td>
+</tr>
+<tr>
+<td>haarcascade_frontalface_default.xml</td>
+<td style="text-align:center">100</td>
+<td style="text-align:center">58</td>
+</tr>
+<tr>
+<td>haarcascade_lefteye_2splits.xml</td>
+<td style="text-align:center">81</td>
+<td style="text-align:center">18</td>
+</tr>
+<tr>
+<td>haarcascade_righteye_2splits.xml</td>
+<td style="text-align:center">83</td>
+<td style="text-align:center">15</td>
+</tr>
+<tr>
+<td>haarcascade_profileface.xml</td>
+<td style="text-align:center">47</td>
+<td style="text-align:center">2</td>
+</tr>
+<tr>
+<td>haarcascade_smile.xml</td>
+<td style="text-align:center">100</td>
+<td style="text-align:center">100</td>
+</tr>
+</tbody>
+</table>
 
 </div>
 </div>
@@ -13647,6 +13689,8 @@ Percentage of detected human faces in dog_files: 11%
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Question 2:</strong> This algorithmic choice necessitates that we communicate to the user that we accept human images only when they provide a clear view of a face (otherwise, we risk having unneccessarily frustrated users!). In your opinion, is this a reasonable expectation to pose on the user? If not, can you think of a way to detect humans in images that does not necessitate an image with a clearly presented face?</p>
 <p><strong>Answer:</strong></p>
+<p>In my opinion, it might be reasonable that only images showing a clear human face are allowed in this particular case. However, we have to make clear what is expected for detecting people in images and we have to inform the user about this constraint when using the app to avoid frustrations. 
+For other cases, where the detection of human beings are essential, e.g. in self-driving cars, other more reliable techniques with better trained models have to be applied. Here, we could use Human Pose Estimation, where deep learning models can identify the positions of joints of a person, or Human Segmentation, where a model can identify the polygonal boundary representing each person. (see <a href="https://medium.com/@madhawavidanapathirana/https-medium-com-madhawavidanapathirana-real-time-human-detection-in-computer-vision-part-1-2acb851f4e55">here</a>)</p>
 <p>We suggest the face detector from OpenCV as a potential way to detect human images in your algorithm, but you are free to explore other approaches, especially approaches that make use of deep learning :).  Please use the code cell below to design and test your own face detection algorithm.  If you decide to pursue this <em>optional</em> task, report performance on each of the datasets.</p>
 
 </div>
@@ -13974,19 +14018,19 @@ Percentage of detected dogs in dog_files: 100%
 <p><strong>Question 4:</strong> Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  If you chose to use the hinted architecture above, describe why you think that CNN architecture should work well for the image classification task.</p>
 <p><strong>Answer:</strong></p>
 <ul>
-<li><p>The images are preprocessed to have a size of an input shape of 223 by 223 matrix with three color channels (223,223,3).</p>
+<li><p>The images are preprocessed to have a size of an input shape of 224 by 224 matrix with three color channels red, blue, green (224,224,3).</p>
 </li>
-<li><p>The first layer is a two-dimensional convolution layer, which creates a convolution kernel with a specific number of output filters (16 as shwon in the output shape in the image above). The purpose of this layer is to identify low-level features such as edges in the image. In this layer, the kernel has a size of a 2 to obtain the same amount of parameters as in the architecture shown above. To preserve the spatial dimensions of the image, we choose <code>same</code> as padding at the image boundaries. The activation function is a Rectified Linear Unit or <code>relu</code> in short.</p>
+<li><p>The first layer is a two-dimensional convolution layer, which creates a convolution kernel with a specific number of output filters (16 as shown in the output shape in the image above). The purpose of this layer is to identify low-level features such as edges in the image. In this layer, the kernel has a size of a 2 to obtain the same amount of parameters as in the architecture shown above. To preserve the spatial dimensions of the image, we choose <code>same</code> as padding at the image boundaries. The activation function is a Rectified Linear Unit or <code>relu</code> in short.</p>
 </li>
-<li><p>The two-dimensional MaxPooling layer is used to reduce the spatial dimensions of the output volume. The pool size parameter contains the downscale factor for each dimension. In the architecture shown in the image above, we are instructed to downscale from (223,223,16) to (111,111,16). Thus, we choose a pool_size of (2,2).</p>
+<li><p>The two-dimensional MaxPooling layer is used to reduce the spatial dimensions of the output volume. The pool size parameter contains the downscale factor for each dimension. In the architecture shown in the image above, we are instructed to downscale from (224,224,16) to (112,112,16). Thus, we choose a pool_size of (2,2).</p>
 </li>
 <li><p>The following convolution layer is quite like the first with the difference of the number of output filters, which should be 32 in this layer.</p>
 </li>
 <li><p>Again, we reduce the image size by the factor of two for both height and width by using a MaxPooling layer.</p>
 </li>
-<li><p>The third convolution layer has an output shape of (54,54,64). Thus, we have to choose 64 for the number of filters.</p>
+<li><p>The third convolution layer has an output shape of (56,56,64). Thus, we have to choose 64 for the number of filters.</p>
 </li>
-<li><p>The third MaxPooling layer reduces the image size by the same factor to obtain an output shape of (27,27,64).</p>
+<li><p>The third MaxPooling layer reduces the image size by the same factor to obtain an output shape of (28,28,64).</p>
 </li>
 <li><p>The seventh layer in total is a two-dimensional GlobalAveragePooling layer, which calculates the global average of the image and reduces the size to one times the number of output filters (64)</p>
 </li>
@@ -14942,7 +14986,7 @@ To build a model architecture by using transfer learning, I started as in <a hre
 </tbody>
 </table>
 <p>As shown in the table above, the ResNet50 network shows the best performance. This model has the highest accuracy for each combination of parameters and has a short training time, especially for a small number of nodes in the dense layer. However, the training time increases significantly by adding more nodes to that layer. The accuracy of the InceptionV3 network is only slightly worse but the network seems very complex, resulting in high training times. The least accurate model is obtained by using the pretrained VGG19 CNN, however, it seems quite efficient when we use more nodes in the dense layer.</p>
-<p>Since I wanted to priorize the accuracy of the model, I used the ResNet50 CNN with a dense layer with 1024 nodes and a dropout rate of 0.3, although the same model with a dropout rate of 0.1 nearly achieved the same accuracy. I also tried samples of higher dropout rates but did not achieve an accuracy higher than 85.29%.</p>
+<p>Since I wanted to prioritize the accuracy of the model, I used the ResNet50 CNN with a dense layer with 1024 nodes and a dropout rate of 0.3, although the same model with a dropout rate of 0.1 nearly achieved the same accuracy. I also tried samples of higher dropout rates but did not achieve an accuracy higher than 85.29%.</p>
 
 </div>
 </div>
@@ -15788,10 +15832,10 @@ Prediction:  Boykin_spaniel
 <h3 id="(IMPLEMENTATION)-Test-Your-Algorithm-on-Sample-Images!">(IMPLEMENTATION) Test Your Algorithm on Sample Images!<a class="anchor-link" href="#(IMPLEMENTATION)-Test-Your-Algorithm-on-Sample-Images!">&#182;</a></h3><p>Test your algorithm at least six images on your computer.  Feel free to use any images you like.  Use at least two human and two dog images.</p>
 <p><strong>Question 6:</strong> Is the output better than you expected :) ?  Or worse :( ?  Provide at least three possible points of improvement for your algorithm.</p>
 <p><strong>Answer:</strong></p>
-<p>The output of the test of the implemented algorithm was as expected. The created model achieved an accuracy of 84.69% in correctly identifying dog breeds by showing a picture of a dog. In the test below, where I used images of the <code>test_images</code> folder, I wanted to know how good the algorithm is in distinguishing dogs and human beings from other animals in a photo. Here, all (real) dogs were found and the dog breed was correctly classified. Both human beings (male and female) were also found in the right way. Furthermore the algorithm named the dog breed the human ressembles. However, the three images without any real dog or human were only partly correct. The face detector and dog detector correctly discard the pig and the drawing of a dog, but the face detector failed in classifying the cat as a human being. Thus, a dog breed was assigned which resembles most. In this case, the Maltese was picked by the algorithm, which is at least a good choice because it really resembles this picture of a cat.</p>
+<p>The output of the test of the implemented algorithm was as expected. The created model achieved an accuracy of 85.29% in correctly identifying dog breeds by showing a picture of a dog. In the test below, where I used images of the <code>test_images</code> folder, I wanted to know how good the algorithm is in distinguishing dogs and human beings from other animals in a photo. Here, all (real) dogs were found and the dog breed was correctly classified. Both human beings (male and female) were also found in the right way. Furthermore the algorithm named the dog breed the human ressembles. However, the three images without any real dog or human were only partly correct. The face detector and dog detector correctly discard the pig and the drawing of a dog, but the face detector failed in classifying the cat as a human being. Thus, a dog breed was assigned which resembles most. In this case, the Maltese was picked by the algorithm, which is at least a good choice because it really resembles this picture of a cat.</p>
 <p>Improvements for my algorithm:</p>
 <ol>
-<li>The training set of dog images might be a little bit to small. Thus, the model might perform in a better way, if we could provide a larger training set.</li>
+<li>The training set of dog images might be a little bit too small. Thus, the model might perform in a better way, if we could provide a larger training set.</li>
 <li>To find an appropriate model, I only tuned some parameters like optimizer, dropout rate and nodes of a dense layer. For the other options or for the optimizer itself, I used the default parameters. To achieve better models, it might be promising to fine-tune the hyperparameter by using GridSearch.</li>
 <li>The preprocessing of the images are very constrained. I only took the images as they were and only adjusted the size. Here, better results might be achieved by using augmentations as described <a href="https://machinelearningmastery.com/how-to-configure-image-data-augmentation-when-training-deep-learning-neural-networks/">here</a>. Techniques to do so are presented in this <a href="https://github.com/aleju/imgaug">Github Repository</a>.</li>
 </ol>
